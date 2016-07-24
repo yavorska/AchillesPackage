@@ -1,0 +1,127 @@
+---
+title: "YavAch Package Vignette"
+author: "Olena Yavorska"
+date: "10 July 2016"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+---
+
+# Introduction
+
+This package was designed to analyse the Achilles v2.0 and v2.4 datasets from the Broad Institute, however, any other shRNA screens can also be analysed in a similar fashion through building an "RNAi" object. Namely :
+
+```{r}
+library(YavAch)
+
+# The data
+data("Achilles2.4_data") # Achilles v2.4 dataset
+data("Achilles2.4_annotation") # The p53 annotation for the Achilles v2.4 dataset
+
+# Read in the shRNA data with a row for each hairpin and columns corresponding to cell lines.
+head(Achilles2.4_Data[,1:5])
+
+# Create a new RNAi object by filling in the corresponding slots
+RNAiObject <- new(Class = "RNAi",
+                  genes = Achilles2.4_Data$Gene,
+                  sequences = Achilles2.4_Data$Name,
+                  cancers = colnames(Achilles2.4_Data)[-(1:2)],
+                  cancersP53 = Achilles2.4_annotation,
+                  values = Achilles2.4_Data[,-(1:2)])
+
+```
+
+Most of the functions within the package require an "RNAi" object.
+
+# General Functions
+
+## Variation of shRNAs
+
+```{r}
+# object        an RNAi object
+# cancerID      a character string indicating the cell line of interest (partial string matching is sufficient)
+# geneName      character string specifying the name of the gene of interest (case sensitive)   
+# type          can be either "all" or "median"
+
+variation.within.cell.line(object = RNAiObject, cancerID = "SLR24", geneName = "MDM4", type = "all")
+```
+
+```{r}
+# object        an RNAi object
+# entityName    can either be "all" or the name of one of the entity in question (partial string matching is sufficient)
+# geneName      character string specifying the name of the gene of interest (case sensitive) 
+
+variation.within.entity(object = RNAiObject, entityName = "BONE", geneName = "MDM4")
+```
+
+```{r}
+# object        an RNAi object
+# geneName      character string specifying the name of the gene of interest (case sensitive) 
+# type          one of "value" or "rank"
+# statistic     one of "mean" or "median"
+ 
+variation.within.entities(object = RNAiObject, geneName = "MDM4", type = "value", statistic = "mean")
+```
+
+## Consistency of phenotypes
+```{r}
+# object        an RNAi object
+# entityName    can either be "all" or the name of one of the entity in question (partial string matching is sufficient)
+# geneName      character string specifying the name of the gene of interest (case sensitive) 
+# type          one of "line" or "box""
+
+consistency.of.phenotypes(object = RNAiObject, entityName = "BONE", geneName = "MDM4", type = "line")
+```
+
+## p53 dependency
+```{r}
+# object        an RNAi object
+# entityName    can either be "all" or the name of one of the entity in question (partial string matching is sufficient)
+# geneName      character string specifying the name of the gene of interest (case sensitive) 
+# type          one of "line" or "box""
+
+p53.dependency.by.entity(object = RNAiObject, entityName = "Lung", geneName = "MDM4", p53 = "all", type = "line")
+```
+
+# Riger Functions
+
+The RIGER functions require a separate data structure. In this case a simple data.frame is used (the files used for analysing both Achilles datasets are included in the package).
+
+```{r}
+data("Achilles2.0") # RIGER data for the Achilles v2.0 dataset
+data("Achilles2.4") # RIGER data for the Achilles v2.4 dataset
+
+head(Achilles2.4[,1:5])
+```
+
+## Evaluation of RIGER gene score
+
+```{r}
+# object        must be an object of the above type
+# geneName      character string specifying the name of the gene of interest (case sensitive)
+# entityName    can either be "all" or the name of one of the entity in question (partial string matching is sufficient)
+
+riger.gene.comparison(object = Achilles2.4, geneName = "MDM4", entityName = "All")
+```
+
+## Evaluation of RIGER gene score across datasets
+
+```{r}
+# object1        must be an object of the above type
+# object2        must be an object of the above type
+# object1Name    character vector giving the name of the first dataset used in the plot
+# object2Name    character vector giving the name of the second dataset used in the plot
+# geneName       character string specifying the name of the gene of interest (case sensitive)
+# entityName     can either be "all" or the name of one of the entity in question (partial string matching is sufficient)
+# percentage     top and bottom quantiles which should be coloured (number between 1 and 100)
+# plotName       character string giving the name of the plot
+
+riger.gene.comparison.datasets(object1 = Achilles2.0, object2 = Achilles2.4,
+                               object1Name = "Ach1", object2Name = "Ach2",
+                               geneName = "MDM4",
+                               entityName = "Colon",
+                               percentage = 1,
+                               plotName = "Comparing RIGER scores")
+```
