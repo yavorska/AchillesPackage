@@ -37,7 +37,7 @@ setMethod(f = "p53.dependency.by.entity",
 
             if(type == "line") {
 
-              plot(ggplot(meltedDF2[which(meltedDF2$p53 %in% status),],
+              .plot <- ggplot(meltedDF2[which(meltedDF2$p53 %in% status),],
                      aes(x = as.factor(gene), y = value)) +
                 geom_point(alpha = 0.8,
                            aes(colour = p53, group = p53, shape = cancer), size = 2) +
@@ -50,17 +50,17 @@ setMethod(f = "p53.dependency.by.entity",
                 xlab(paste(geneName, "shRNAs")) + theme(axis.text.x = element_text(angle = 90)) +
                 ylab("FC") +
                 ggtitle(paste("p53 dependency of", entityName, "cell lines")) +
-                theme)
-              
+                theme
+
               output.df <- data.frame(shRNA = geneNames.number, sequence = geneNames)
-              print.data.frame(output.df)
+              return(list(shRNAs = output.df, Plot = .plot))
 
             } else if (type == "box") {
 
               # Remove non available values
               meltedDF3 <- meltedDF2[which(meltedDF2$p53 != "NA"),]
 
-              plot(ggplot(meltedDF3, aes(x = gene, y = value, fill = p53)) +
+              .plot <- ggplot(meltedDF3, aes(x = gene, y = value, fill = p53)) +
                 geom_boxplot(alpha = 0.8) +
                 theme_bw() +
                 theme(axis.ticks = element_blank(), axis.text.x = element_blank()) +
@@ -69,10 +69,10 @@ setMethod(f = "p53.dependency.by.entity",
                 xlab(paste(geneName, "shRNAs")) +
                 ylab("FC") +
                 ggtitle(paste("p53 dependency of", entityName, "cell lines")) +
-                theme)
-              
+                theme
+
               output.df <- data.frame(shRNA = geneNames.number, sequence = geneNames)
-              print.data.frame(output.df)
+              return(list(shRNAs = output.df, Plot = .plot))
 
             } else {
               cat("The type of plot chosen must be one of: line or box.")
