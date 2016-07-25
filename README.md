@@ -5,6 +5,7 @@ This package can be used to analyse shRNA data in R. In particular, the Achilles
 To load the package in R : 
 
 library(devtools)
+
 install_github("yavorska/AchillesPackage")
 
 Note: due to the file size restrictions, one must manually include the Achilles2.4_data file in the package. 
