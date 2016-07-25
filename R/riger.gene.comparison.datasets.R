@@ -30,10 +30,14 @@ setMethod(f = "riger.gene.comparison.datasets",
             df$top1 <- ifelse(df$Ach1.rank > (1 - percentage/100)*nGenes, T, F)
             df$top2 <- ifelse(df$Ach2.rank > (1 - percentage/100)*nGenes, T, F)
 
+            top.both <- df$Gene[which(df$top1 == TRUE & df$top2 == TRUE)]
+
             df$bottom1 <- ifelse(df$Ach1.rank < (percentage/100)*nGenes, T, F)
             df$bottom2 <- ifelse(df$Ach2.rank < (percentage/100)*nGenes, T, F)
 
-            ggplot(data = df,
+            bottom.both <- df$Gene[which(df$bottom1 == TRUE & df$bottom2 == TRUE)]
+
+            .plot <- ggplot(data = df,
                    aes(x = Ach1, y = Ach2)) +
               geom_point(alpha = 0.2, color = "gray69", size = 1) +
 
@@ -62,5 +66,9 @@ setMethod(f = "riger.gene.comparison.datasets",
               ggtitle(plotName) +
               # Add theme
               theme
+
+            return(list(TopBoth = as.character(top.both), BottomBoth = as.character(bottom.both), Plot = .plot))
+
+
           }
 )
