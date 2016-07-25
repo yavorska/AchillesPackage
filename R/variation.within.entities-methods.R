@@ -3,6 +3,7 @@ setMethod(f = "variation.within.entities",
           definition = function(object, geneName, type = "value", statistic = "mean"){
 
             geneIndex <- which(object@genes == geneName)
+            geneNames.number <- paste(geneName, 1:length(geneIndex), sep = "_")
             geneNames <- paste(geneName, object@sequences[geneIndex], sep = "_")
 
             ngenes <- length(geneIndex)
@@ -14,7 +15,7 @@ setMethod(f = "variation.within.entities",
                                    ncol = ncancers)
 
             colnames(resultMatrix) <- cancerNames
-            rownames(resultMatrix) <- geneNames
+            rownames(resultMatrix) <- geneNames.number
 
             for (k in 1:length(cancerNames))
             {
@@ -45,7 +46,7 @@ setMethod(f = "variation.within.entities",
             # value is the FC
             meltedResultMatrix <- melt(resultMatrix)
 
-            ggplot(meltedResultMatrix, aes(x = Var2, y = value, group = as.factor(Var1), color = as.factor(Var1))) +
+            plot(ggplot(meltedResultMatrix, aes(x = Var2, y = value, group = as.factor(Var1), color = as.factor(Var1))) +
               geom_line() +
               geom_hline(yintercept = 0, alpha = 0.3, linetype = "dashed", color = "red") +
               theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 10)) +
@@ -53,7 +54,10 @@ setMethod(f = "variation.within.entities",
               xlab("Entity") +
               ylab(paste(geneName, "FC")) +
               ggtitle(paste("Variation of", geneName, "shRNAs within entities")) +
-              theme
+              theme)
+
+            output.df <- data.frame(shRNA = geneNames.number, sequence = geneNames)
+            print.data.frame(output.df)
 
           }
 )
