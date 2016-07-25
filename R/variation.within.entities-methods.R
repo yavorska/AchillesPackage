@@ -1,6 +1,6 @@
 setMethod(f = "variation.within.entities",
           signature = "RNAi",
-          definition = function(object, geneName, type = "value", statistic = "mean"){
+          definition = function(object, geneName, type = "value", statistic = "mean", list = F){
 
             geneIndex <- which(object@genes == geneName)
             geneNames.number <- paste(geneName, 1:length(geneIndex), sep = "_")
@@ -56,8 +56,9 @@ setMethod(f = "variation.within.entities",
               ggtitle(paste("Variation of", geneName, "shRNAs within entities")) +
               theme)
 
-            output.df <- data.frame(shRNA = geneNames.number, sequence = geneNames)
-            print.data.frame(output.df)
-
+            if(list){
+              output.df <- data.frame(shRNA = geneNames.number, sequence = geneNames)
+              print.data.frame(output.df)
+            }
           }
 )
