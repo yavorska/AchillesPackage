@@ -15,7 +15,7 @@ setMethod(f = "riger.gene.comparison",
             colnames(df) <- c("Gene", "Score", "Rank")
             df <- arrange(df, Score)
             df$Rank <- rev(df$Rank)
-            
+
             col <- ifelse(df$Score[which(df$Gene == geneName)] < 0,
                           'red4', 'green4')
 
@@ -32,10 +32,10 @@ setMethod(f = "riger.gene.comparison",
                                            'red2', 'green3'), size = 3) +
 
                 ggtitle(paste("RIGER scores for", entityName, "cell lines")) +
-                annotate("text", 
+                annotate("text",
                          label = paste(geneName, "\n",
                                        "Rank = ", df$Rank[which(df$Gene == geneName)], "\n",
-                                       "Score = ", df$Score[which(df$Gene == geneName)], sep = ""), 
+                                       "Score = ", df$Score[which(df$Gene == geneName)], sep = ""),
                             x = 500, y = 0.8, size = 5, colour = col, hjust = 0) +
                 theme
 
